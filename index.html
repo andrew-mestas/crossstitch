@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="#" />
+    <link rel="stylesheet" href="Skeleton-2.0.4/css/normalize.css">
+    <link rel="stylesheet" href="Skeleton-2.0.4/css/skeleton.css">
+    <title>Cross Stitch</title>
+    <!-- https://colors.eva.design/ -->
+</head>
+
+<body>
+    <script>
+        const threshold = (e) => maxDist = e.value
+        const changeHeight = (e) => targetHeight = e.value
+        const changeWidth = (e) => targetWidth = e.value
+        const changeSegment = (e) => targetSegment = e.value
+        const distance = (x1, y1, z1, x2, y2, z2) => Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2) + Math.pow(z2 - z1, 2))
+    </script>
+    <!-- http://tholman.com/github-corners/ -->
+    <a href="https://github.com/andrew-mestas/chroma-key" class="github-corner" aria-label="View source on GitHub"><svg
+            width="80" height="80" viewBox="0 0 250 250"
+            style="fill:#3366FF; color:#28282A; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true">
+            <path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path>
+            <path
+                d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2"
+                fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path>
+            <path
+                d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z"
+                fill="currentColor" class="octo-body"></path>
+        </svg></a>
+    <style>
+        .github-corner:hover .octo-arm {
+            animation: octocat-wave 560ms ease-in-out
+        }
+
+        @keyframes octocat-wave {
+
+            0%,
+            100% {
+                transform: rotate(0)
+            }
+
+            20%,
+            60% {
+                transform: rotate(-25deg)
+            }
+
+            40%,
+            80% {
+                transform: rotate(10deg)
+            }
+        }
+
+        @media (max-width:500px) {
+            .github-corner:hover .octo-arm {
+                animation: none
+            }
+
+            .github-corner .octo-arm {
+                animation: octocat-wave 560ms ease-in-out
+            }
+        }
+
+        #color-map {
+            display: flex
+        }
+    </style>
+    <div class="container">
+        <h2>Cross Stitch With Me</h2>
+        <hr>
+        <h5>Cross stitching helper.</h5>
+        <ol>
+            <li>Choose target dimensions</li>
+            <li>Choose image</li>
+            <li>Choose colors available to you as matching color</li>
+            <li>Select image segment (higher for less resolution)</li>
+            <li>Press go!</li>
+        </ol>
+        <hr>
+        <div class="row">
+            <h4>Fill image</h4>
+
+            <div class="offset-by-four six columns" id="image-holder">
+            </div>
+        </div>
+        <div class="row">
+            <h4>Output</h4>
+            <div class="offset-by-four six columns" id="image-output">
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row">
+            <div>
+                <hr>
+            </div>
+        </div>
+        <div class="row">
+            <div class="one-third column">
+                <label for="image-fill">Fill image</label>
+                <input id="image-fill" onchange="imageReady(this)" type="file">
+            </div>
+            <div class="one-third column">
+                <label for="image-resolution">Image segment</label>
+                <input type="number" min="2" max="4" value="2" id="image-resolution" onchange="changeSegment(this)">
+            </div>
+            <div class="one-third column">
+                <label for="crossstitch-resolution">Cross Stitch Dimensions</label>
+                <span id="crossstitch-resolution"></span>
+            </div>
+        </div>
+        <div class="row">
+            <div class="one-third column">
+                <label for="target-height">Target Height</label>
+                <input type="number" min="0" max="2000" step="10" value="500" id="target-height"
+                    onchange="changeHeight(this)">
+            </div>
+            <div class="one-third column">
+                <label for="target-width">Target Width</label>
+                <input type="number" min="0" max="2000" step="10" value="500" id="target-width"
+                    onchange="changeWidth(this)">
+            </div>
+            <div class="one-third column">
+                <label for="colors">Cross Stitch</label>
+                <button id="colors">Go</button>
+            </div>
+        </div>
+        <hr>
+
+        <div class="row">
+            <div class="one-third column">
+                <label for="keyColor">Matching Color</label>
+                <input type="color" value="#00FF00" id="keyColor">
+                <button id="addColor">Add Color</button>
+            </div>
+            <div class="one-third column">
+                Color Map
+                <div id="color-map">
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <script src="multiples.js"></script>
+    <script src="imageProcess.js"></script>
+    <script>
+        let maxDist = 180
+        let targetHeight = 500
+        let targetWidth = 500
+        let targetSegment = 2
+        let fillImage = null
+        let defaultColor = { r: 0, g: 255, b: 0 }
+        let colors = {}
+        let labels = {}
+        let currentIdx = 0
+
+        const outputButton = document.getElementById('colors')
+        const imageHolder = document.getElementById('image-holder')
+        const imageOutput = document.getElementById('image-output')
+        const crossstitchResolution = document.getElementById('crossstitch-resolution')
+        const container = document.getElementsByClassName('container')[0]
+        const targetImageCanvas = document.createElement('canvas')
+        const targetCtx = targetImageCanvas.getContext('2d')
+        const crossStitchImageCanvas = document.createElement('canvas')
+        const crossStitchCtx = crossStitchImageCanvas.getContext('2d')
+        const color = document.getElementById('keyColor')
+        const colorMapArea = document.getElementById('color-map')
+        document.getElementById('addColor').addEventListener('click', addColor)
+        crossStitchImageCanvas.addEventListener("click", fullscreen)
+        outputButton.addEventListener('click', () => {
+            getPerformance(drawColors, 'drawColors');
+        })
+
+        function fullscreen() {
+             if (crossStitchImageCanvas.webkitRequestFullScreen) {
+                crossStitchImageCanvas.webkitRequestFullScreen();
+            }
+            else {
+                crossStitchImageCanvas.mozRequestFullScreen();
+            }
+        }
+
+        function getPerformance(fn, name) {
+            const t0 = performance.now();
+            fn();
+            const t1 = performance.now();
+            console.log(`Call to ${name} took ${t1 - t0} milliseconds.`);
+        }
+
+        function imageReady(input) {
+            const reader = new FileReader();
+            reader.onload = () => {
+                fillImage = new Image()
+                fillImage.src = reader.result
+                fillImage.onload = loaded;
+                fillImage.width = targetWidth
+                fillImage.height = targetHeight
+            }
+            reader.readAsDataURL(input.files[0])
+        }
+
+        function loaded() {
+            targetImageCanvas.height = targetHeight
+            targetImageCanvas.width = targetWidth
+            crossStitchImageCanvas.height = targetHeight
+            crossStitchImageCanvas.width = targetWidth
+
+            targetCtx.drawImage(fillImage, 0, 0, fillImage.width, fillImage.height)
+            imageHolder.appendChild(targetImageCanvas)
+        }
+
+        function drawColors() {
+            let labels = []
+            let colorsArr = []
+
+            for (let [key, value] of Object.entries(colors)) {
+                labels.push(key)
+                colorsArr.push(value)
+            }
+
+            let imageProcess = new ImageProcess(colorsArr);
+            let matrix = new Multiples(fillImage.width).intersect(new Multiples(fillImage.height)).generatePossible().createMatrix();
+            
+            let imageData = targetCtx.getImageData(0, 0, fillImage.width, fillImage.height)
+            crossStitchCtx.putImageData(imageData, 0, 0)
+
+            imageOutput.appendChild(crossStitchImageCanvas)
+
+            const coordsMatrix = matrix[targetSegment].reduce(function (a, b) {
+                return a.concat(b);
+            }, []);
+            
+            var results = coordsMatrix.map(function (coord) {
+                return processColors(coord, imageProcess)
+            });
+
+            crossstitchResolution.innerHTML = `${matrix[targetSegment].length} x ${matrix[targetSegment].length}`
+
+            Promise.all(results).then((data) => {
+                data.forEach((x) => {
+                    crossStitchCtx.beginPath()
+                    crossStitchCtx.fillStyle = labels[x.values]
+                    crossStitchCtx.fillRect(x.coord[0], x.coord[1], x.coord[2], x.coord[3]);
+                    crossStitchCtx.strokeStyle = "black"
+                    crossStitchCtx.rect(x.coord[0], x.coord[1], x.coord[2], x.coord[3]);
+                    crossStitchCtx.stroke();
+                })
+            })
+        }
+
+        function processColors(coord, imageProcess) {
+            return new Promise((res, rej) => {
+                let dataValues = crossStitchCtx.getImageData(coord[0], coord[1], coord[2], coord[3]);
+                let totals = imageProcess.getDataValues(dataValues);
+                var values = totals.indexOf(Math.max.apply(null, totals));
+                res({ values: values, coord: coord });
+            })
+        }
+
+        function addColor(colorHex, colorRGB) {
+            let chosen = color.value
+            if (colors.hasOwnProperty(chosen))
+                return
+            colors[chosen] = hexToRgb(chosen)
+            var div = document.createElement('div')
+            div.style.backgroundColor = chosen
+            div.style.width = '50px'
+            div.style.height = '50px'
+            div.style.border = '1px solid'
+            div.id = chosen
+
+            div.addEventListener('click', function (e) {
+                colorMapArea.removeChild(e.target)
+                delete colors[e.target.id];
+            })
+            colorMapArea.appendChild(div)
+        }
+
+        // https://stackoverflow.com/questions/5623838/rgb-to-hex-and-hex-to-rgb
+        function hexToRgb(hex) {
+            var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return result ? [
+                parseInt(result[1], 16),
+                parseInt(result[2], 16),
+                parseInt(result[3], 16)
+            ] : null;
+        }
+    </script>
+</body>
+
+</html>
